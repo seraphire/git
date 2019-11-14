@@ -13,6 +13,7 @@ SYNOPSIS
 'git p4 sync' [<sync options>] [<p4 depot path>...]
 'git p4 rebase'
 'git p4 submit' [<submit options>] [<master branch name>]
+'git p4 remove' [<remove options>]
 
 
 DESCRIPTION
@@ -56,6 +57,12 @@ $ git p4 rebase
 +
 ------------
 $ git p4 submit
+------------
+
+* Remove temporary files from P4 workspace:
++
+------------
+git p4 remove
 ------------
 
 
@@ -194,6 +201,29 @@ $ git p4 unshelve 12345
 <refuses to unshelve until git is in sync with p4 again>
 
 ----
+
+Remove
+~~~~~~
+Removing will remove the files from the P4 workspace (`P4CLIENT`) that is used for synchronizing
+with the P4 server.  
+
+To remove files referenced by the current branch use:
+------------
+$ git p4 remove
+------------
+
+To remove files that are flagged as open by P4:
+------------
+$ git p4 remove --revert
+------------
+
+To remove files that are writable or not under source control
+but are found in the `P4CLIENT` (P4 Clobber):
+------------
+$ git p4 remove --force
+------------
+
+
 
 OPTIONS
 -------
