@@ -4080,6 +4080,43 @@ class P4Branches(Command):
             print("%s <= %s (%s)" % (branch, ",".join(settings["depot-paths"]), settings["change"]))
         return True
 
+
+class P4Info(Command):
+    def __init__(self):
+        Command.__init__(self)
+        self.options = [ ]
+        self.description = ("Shows the P4 info as visible by git ")
+        self.verbose = False
+
+    def run(self, args):
+        """ Returns information about the current P4 environment
+        """
+        # results = p4CmdList(["login", "-s"])
+        # pdb.set_trace()
+
+        # We don't want to use the login command since we are looking for info
+        global p4_access_checked
+        p4_access_checked = True
+        results = p4CmdList(["info"])
+
+        if len(results) == 0:
+            # should never get here: always get either some results, or a p4ExitCode
+            assert("could not parse response from perforce")
+
+        result = results[0]
+
+        if 'p4ExitCode' in result:
+            # p4 returned non-zero status, e.g. P4PORT invalid, or p4 not in path
+            die_bad_access("could not run p4")
+
+        # Show the result
+        print("\r\n")
+        for key, value in result.items():
+            key = re.sub("([A-Z])", " \\1", key.decode())
+            print("{0}: {1}".format(key, value.decode()))
+
+        return True
+
 class HelpFormatter(optparse.IndentedHelpFormatter):
     def __init__(self):
         optparse.IndentedHelpFormatter.__init__(self)
@@ -4108,6 +4145,7 @@ commands = {
     "rollback" : P4RollBack,
     "branches" : P4Branches,
     "unshelve" : P4Unshelve,
+    "info" : P4Info,
 }
 
 
